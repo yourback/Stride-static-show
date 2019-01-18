@@ -8,7 +8,7 @@ import sys
 
 
 class MyMplCanvas(FigureCanvas):
-    figuresShow = "14"
+    figuresShow = "15"
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         # 设置中文
@@ -36,7 +36,7 @@ class MyMplCanvas(FigureCanvas):
 
         if '5' in self.figuresShow:
             # build axes5
-            self.axes5 = self.fig.add_subplot(313)
+            self.axes5 = self.fig.add_subplot(212)
 
         FigureCanvas.__init__(self, self.fig)
 
@@ -141,8 +141,8 @@ class MyMplCanvas(FigureCanvas):
 
         if '5' in self.figuresShow:
             # fig 5
-            self.axes5.plot(t, a_b_oldlist, '-', label='左关节角速度')
-            self.axes5.plot(t, c_d_oldlist, '-', label='右关节角速度')
+            self.axes5.plot(t, lulist, '-', label='左腿大腿')
+            self.axes5.plot(t, rulist, '-', label='右腿大腿')
             self.axes5.plot(t, elist, '-', label='工况')
             self.axes5.plot(t, flist, '-', label='状态')
 
