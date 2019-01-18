@@ -34,6 +34,10 @@ class MyMplCanvas(FigureCanvas):
             # build axes4
             self.axes4 = self.fig.add_subplot(212)
 
+        if '5' in self.figuresShow:
+            # build axes5
+            self.axes5 = self.fig.add_subplot(313)
+
         FigureCanvas.__init__(self, self.fig)
 
         self.setParent(parent)
@@ -47,6 +51,7 @@ class MyMplCanvas(FigureCanvas):
         figure2 = Figure2()
         figure3 = Figure3()
         figure4 = Figure4()
+        figure5 = Figure5()
         with open("data.txt") as file:
             print('打开文件')
             while True:
@@ -73,6 +78,7 @@ class MyMplCanvas(FigureCanvas):
                     figure2.add_data(RD, RU, E, J)
                     figure3.add_data(LD, LU, RD, RU, E, J)
                     figure4.add_data(LD, LU, RD, RU, E, J)
+                    figure5.add_data(LU, RU, E, J)
 
         alist, blist, elist, flist = figure1.get_data()
 
@@ -81,6 +87,8 @@ class MyMplCanvas(FigureCanvas):
         a_blist, c_dlist, elist, flist = figure3.get_data()
 
         a_b_oldlist, c_d_oldlist, elist, flist = figure4.get_data()
+
+        lulist, rulist, elist, flist = figure5.get_data()
 
         t = arange(0, len(alist) * 0.02, 0.02)
 
@@ -127,9 +135,20 @@ class MyMplCanvas(FigureCanvas):
             self.axes4.plot(t, flist, '-', label='状态')
 
             #            self.axes4.set_ylabel('X')
-            self.axes4.set_xlabel('time(s)')
+            # self.axes4.set_xlabel('time(s)')
             self.axes4.grid(True)
             self.axes4.legend()
+
+        if '5' in self.figuresShow:
+            # fig 5
+            self.axes5.plot(t, a_b_oldlist, '-', label='左关节角速度')
+            self.axes5.plot(t, c_d_oldlist, '-', label='右关节角速度')
+            self.axes5.plot(t, elist, '-', label='工况')
+            self.axes5.plot(t, flist, '-', label='状态')
+
+            self.axes5.set_xlabel('time(s)')
+            self.axes5.grid(True)
+            self.axes5.legend()
 
 
 # 字转化为int - check
@@ -265,6 +284,23 @@ class Figure4(object):
 
     def get_data(self):
         return self.A_B_oldlist, self.C_D_oldlist, self.Elist, self.Flist
+
+
+class Figure5(object):
+    def __init__(self):
+        self.fig5LUlist = []
+        self.fig5RUlist = []
+        self.Elist = []
+        self.Flist = []
+
+    def add_data(self, LU, RU, E, F):
+        self.fig5LUlist.append(LU)
+        self.fig5RUlist.append(RU)
+        self.Elist.append(E)
+        self.Flist.append(F)
+
+    def get_data(self):
+        return self.fig5LUlist, self.fig5RUlist, self.Elist, self.Flist
 
 
 if __name__ == '__main__':
