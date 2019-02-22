@@ -69,14 +69,16 @@ class MyMplCanvas(FigureCanvas):
                     else:
                         bytelist = line
 
-                    LD = word_num(''.join(bytelist[0:2]), ''.join(bytelist[9:11]))
-                    LU = word_num(''.join(bytelist[2:4]), ''.join(bytelist[11:13]))
-                    RD = word_num(''.join(bytelist[4:6]), ''.join(bytelist[13:15]))
-                    RU = word_num(''.join(bytelist[6:8]), ''.join(bytelist[15:17]))
+                    bytelist = bytelist.replace("0d0a", '')
 
-                    J = byte_num(''.join(bytelist[-3:-2]), '0')
+                    LD = word_num(bytelist[0:4], bytelist[18:22])
+                    LU = word_num(bytelist[4:8], bytelist[22:26])
+                    RD = word_num(bytelist[8:12], bytelist[26:30])
+                    RU = word_num(bytelist[12:16], bytelist[30:34])
 
-                    E = byte_num(''.join(bytelist[8:9]), ''.join(bytelist[17:18]))
+                    J = byte_num(bytelist[-2:], '0')
+
+                    E = byte_num(bytelist[16:18], bytelist[34:36])
 
                     figure1.add_data(LD, LU, E, J)
                     figure2.add_data(RD, RU, E, J)
@@ -157,7 +159,7 @@ class MyMplCanvas(FigureCanvas):
 
 # 字转化为int - check
 def word_num(word, check):
-    # print('word:%s,check:%s' % (word, check))
+    print('word:%s,check:%s' % (word, check))
     # 最高位为1  负数处理
     if int(word[0], 16) >= 8:
         # 现将除了第一位转换为数字
