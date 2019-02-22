@@ -8,7 +8,7 @@ import sys
 
 
 class MyMplCanvas(FigureCanvas):
-    figuresShow = "15"
+    figuresShow = "12345"
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         # 设置中文
@@ -20,23 +20,23 @@ class MyMplCanvas(FigureCanvas):
 
         if "1" in self.figuresShow:
             # build axes1
-            self.axes1 = self.fig.add_subplot(211)
+            self.axes1 = self.fig.add_subplot(511)
 
         if "2" in self.figuresShow:
             # build axes2
-            self.axes2 = self.fig.add_subplot(212)
+            self.axes2 = self.fig.add_subplot(512)
 
         if "3" in self.figuresShow:
             # build axes3
-            self.axes3 = self.fig.add_subplot(313)
+            self.axes3 = self.fig.add_subplot(513)
 
         if "4" in self.figuresShow:
             # build axes4
-            self.axes4 = self.fig.add_subplot(212)
+            self.axes4 = self.fig.add_subplot(514)
 
         if '5' in self.figuresShow:
             # build axes5
-            self.axes5 = self.fig.add_subplot(212)
+            self.axes5 = self.fig.add_subplot(515)
 
         FigureCanvas.__init__(self, self.fig)
 
@@ -52,18 +52,22 @@ class MyMplCanvas(FigureCanvas):
         figure3 = Figure3()
         figure4 = Figure4()
         figure5 = Figure5()
-        with open("data.txt") as file:
-            print('打开文件')
+        with open("data3.txt") as file:
+            # print('打开文件')
             while True:
                 line = file.readline()
                 if not line:
-                    print('停止')
+                    # print('停止')
                     break
                 else:
+                    # 两种格式
+                    if "[" in line:
+                        singleline = line.replace(" ", "")
 
-                    singleline = line.strip()[:-25]
-
-                    bytelist = singleline.split(" ")
+                        bytelist = singleline[:singleline.index("[")]
+                        # print('去掉[', bytelist)
+                    else:
+                        bytelist = line
 
                     LD = word_num(''.join(bytelist[0:2]), ''.join(bytelist[9:11]))
                     LU = word_num(''.join(bytelist[2:4]), ''.join(bytelist[11:13]))
@@ -153,6 +157,7 @@ class MyMplCanvas(FigureCanvas):
 
 # 字转化为int - check
 def word_num(word, check):
+    # print('word:%s,check:%s' % (word, check))
     # 最高位为1  负数处理
     if int(word[0], 16) >= 8:
         # 现将除了第一位转换为数字
@@ -170,7 +175,7 @@ def word_num(word, check):
 
     result -= int(check, 16)
 
-    #    print('补码：%s -> 源码：%d' % (word, result))
+    # print('补码：%s -> 源码：%d' % (word, result))
     return result / 100
 
 
