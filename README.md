@@ -1,4 +1,4 @@
 # Stride-static-show
-Stride static show
+静态数据展示
 
-get data from source txt and import into the program to show
+柔性外骨骼
