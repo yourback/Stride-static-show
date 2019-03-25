@@ -8,7 +8,7 @@ import sys
 
 
 class MyMplCanvas(FigureCanvas):
-    figuresShow = "12345"
+    figuresShow = "125"
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         # 设置中文
@@ -20,11 +20,11 @@ class MyMplCanvas(FigureCanvas):
 
         if "1" in self.figuresShow:
             # build axes1
-            self.axes1 = self.fig.add_subplot(511)
+            self.axes1 = self.fig.add_subplot(311)
 
         if "2" in self.figuresShow:
             # build axes2
-            self.axes2 = self.fig.add_subplot(512)
+            self.axes2 = self.fig.add_subplot(312)
 
         if "3" in self.figuresShow:
             # build axes3
@@ -36,7 +36,7 @@ class MyMplCanvas(FigureCanvas):
 
         if '5' in self.figuresShow:
             # build axes5
-            self.axes5 = self.fig.add_subplot(515)
+            self.axes5 = self.fig.add_subplot(313)
 
         FigureCanvas.__init__(self, self.fig)
 
@@ -52,7 +52,7 @@ class MyMplCanvas(FigureCanvas):
         figure3 = Figure3()
         figure4 = Figure4()
         figure5 = Figure5()
-        with open("data3.txt") as file:
+        with open("data.txt") as file:
             # print('打开文件')
             while True:
                 line = file.readline()
@@ -69,6 +69,8 @@ class MyMplCanvas(FigureCanvas):
                     else:
                         bytelist = line
 
+
+                    bytelist = bytelist.replace("0D0A", '')
                     bytelist = bytelist.replace("0d0a", '')
 
                     LD = word_num(bytelist[0:4], bytelist[18:22])
@@ -76,10 +78,12 @@ class MyMplCanvas(FigureCanvas):
                     RD = word_num(bytelist[8:12], bytelist[26:30])
                     RU = word_num(bytelist[12:16], bytelist[30:34])
 
+                    print('数据：%s'%bytelist)
+
                     J = byte_num(bytelist[-2:], '0')
-
+                    print('J:%s' % J)
                     E = byte_num(bytelist[16:18], bytelist[34:36])
-
+                    print('E:%s' % E)
                     figure1.add_data(LD, LU, E, J)
                     figure2.add_data(RD, RU, E, J)
                     figure3.add_data(LD, LU, RD, RU, E, J)
@@ -100,10 +104,10 @@ class MyMplCanvas(FigureCanvas):
 
         if "1" in self.figuresShow:
             # 图1
-            self.axes1.plot(t, alist, '-', label='左腿小腿')
+            # self.axes1.plot(t, alist, '-', label='左腿小腿')
             self.axes1.plot(t, blist, '-', label='左腿大腿')
-            self.axes1.plot(t, elist, '-', label='工况')
-            self.axes1.plot(t, flist, '-', label='状态')
+            # self.axes1.plot(t, elist, '-', label='工况')
+            # self.axes1.plot(t, flist, '-', label='状态')
 
             #            self.axes1.set_ylabel('X')
             #            self.axes1.set_xlabel('Y')
@@ -112,10 +116,10 @@ class MyMplCanvas(FigureCanvas):
 
         if "2" in self.figuresShow:
             # 图2
-            self.axes2.plot(t, clist, '-', label='右腿小腿')
+            # self.axes2.plot(t, clist, '-', label='右腿小腿')
             self.axes2.plot(t, dlist, '-', label='右腿大腿')
-            self.axes2.plot(t, elist, '-', label='工况')
-            self.axes2.plot(t, flist, '-', label='状态')
+            # self.axes2.plot(t, elist, '-', label='工况')
+            # self.axes2.plot(t, flist, '-', label='状态')
             #            self.axes2.set_ylabel('X')
             #            self.axes2.set_xlabel('Y')
             self.axes2.grid(True)
@@ -147,6 +151,8 @@ class MyMplCanvas(FigureCanvas):
 
         if '5' in self.figuresShow:
             # fig 5
+            # print('图5 E工况:%s' % elist)
+            # print('图5 J状态:%s' % flist)
             self.axes5.plot(t, lulist, '-', label='左腿大腿')
             self.axes5.plot(t, rulist, '-', label='右腿大腿')
             self.axes5.plot(t, elist, '-', label='工况')
@@ -159,7 +165,7 @@ class MyMplCanvas(FigureCanvas):
 
 # 字转化为int - check
 def word_num(word, check):
-    print('word:%s,check:%s' % (word, check))
+    # print('word:%s,check:%s' % (word, check))
     # 最高位为1  负数处理
     if int(word[0], 16) >= 8:
         # 现将除了第一位转换为数字
@@ -183,6 +189,7 @@ def word_num(word, check):
 
 # 字节转化为int - check
 def byte_num(byte, check):
+    print('word:%s,check:%s' % (byte, check))
     # 最高位为1  负数处理
     if int(byte[0], 16) >= 8:
         # 现将除了第一位转换为数字
