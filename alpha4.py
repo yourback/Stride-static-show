@@ -8,7 +8,7 @@ import sys
 
 
 class MyMplCanvas(FigureCanvas):
-    figuresShow = "125"
+    figuresShow = "25"
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         # 设置中文
@@ -24,7 +24,7 @@ class MyMplCanvas(FigureCanvas):
 
         if "2" in self.figuresShow:
             # build axes2
-            self.axes2 = self.fig.add_subplot(312)
+            self.axes2 = self.fig.add_subplot(211)
 
         if "3" in self.figuresShow:
             # build axes3
@@ -32,11 +32,11 @@ class MyMplCanvas(FigureCanvas):
 
         if "4" in self.figuresShow:
             # build axes4
-            self.axes4 = self.fig.add_subplot(514)
+            self.axes4 = self.fig.add_subplot(111)
 
         if '5' in self.figuresShow:
             # build axes5
-            self.axes5 = self.fig.add_subplot(313)
+            self.axes5 = self.fig.add_subplot(212)
 
         FigureCanvas.__init__(self, self.fig)
 
@@ -69,7 +69,6 @@ class MyMplCanvas(FigureCanvas):
                     else:
                         bytelist = line
 
-
                     bytelist = bytelist.replace("0D0A", '')
                     bytelist = bytelist.replace("0d0a", '')
 
@@ -78,12 +77,12 @@ class MyMplCanvas(FigureCanvas):
                     RD = word_num(bytelist[8:12], bytelist[26:30])
                     RU = word_num(bytelist[12:16], bytelist[30:34])
 
-                    print('数据：%s'%bytelist)
+                    # print('数据：%s'%bytelist)
 
                     J = byte_num(bytelist[-2:], '0')
-                    print('J:%s' % J)
+                    # print('J:%s' % J)
                     E = byte_num(bytelist[16:18], bytelist[34:36])
-                    print('E:%s' % E)
+                    # print('E:%s' % E)
                     figure1.add_data(LD, LU, E, J)
                     figure2.add_data(RD, RU, E, J)
                     figure3.add_data(LD, LU, RD, RU, E, J)
@@ -124,6 +123,8 @@ class MyMplCanvas(FigureCanvas):
             #            self.axes2.set_xlabel('Y')
             self.axes2.grid(True)
             self.axes2.legend()
+            print('减：%s' % dlist)
+            print('减长度：%s' % len(dlist))
 
         if "3" in self.figuresShow:
             # 图3
@@ -140,9 +141,9 @@ class MyMplCanvas(FigureCanvas):
         if "4" in self.figuresShow:
             # 图4
             self.axes4.plot(t, a_b_oldlist, '-', label='左关节角速度')
-            self.axes4.plot(t, c_d_oldlist, '-', label='右关节角速度')
-            self.axes4.plot(t, elist, '-', label='工况')
-            self.axes4.plot(t, flist, '-', label='状态')
+            # self.axes4.plot(t, c_d_oldlist, '-', label='右关节角速度')
+            # self.axes4.plot(t, elist, '-', label='工况')
+            # self.axes4.plot(t, flist, '-', label='状态')
 
             #            self.axes4.set_ylabel('X')
             # self.axes4.set_xlabel('time(s)')
@@ -153,14 +154,16 @@ class MyMplCanvas(FigureCanvas):
             # fig 5
             # print('图5 E工况:%s' % elist)
             # print('图5 J状态:%s' % flist)
-            self.axes5.plot(t, lulist, '-', label='左腿大腿')
+            # self.axes5.plot(t, lulist, '-', label='左腿大腿')
             self.axes5.plot(t, rulist, '-', label='右腿大腿')
-            self.axes5.plot(t, elist, '-', label='工况')
-            self.axes5.plot(t, flist, '-', label='状态')
+            # self.axes5.plot(t, elist, '-', label='工况')
+            # self.axes5.plot(t, flist, '-', label='状态')
 
             self.axes5.set_xlabel('time(s)')
             self.axes5.grid(True)
             self.axes5.legend()
+            print('原：%s' % rulist)
+            print('原长度：%s' % len(rulist))
 
 
 # 字转化为int - check
@@ -189,7 +192,7 @@ def word_num(word, check):
 
 # 字节转化为int - check
 def byte_num(byte, check):
-    print('word:%s,check:%s' % (byte, check))
+    # print('word:%s,check:%s' % (byte, check))
     # 最高位为1  负数处理
     if int(byte[0], 16) >= 8:
         # 现将除了第一位转换为数字
@@ -248,17 +251,23 @@ class Figure2(object):
     def __init__(self):
         self.Clist = []
         self.Dlist = []
+        self.Dlist_show = []
         self.Elist = []
         self.Flist = []
 
     def add_data(self, C, D, E, F):
         self.Clist.append(C)
-        self.Dlist.append(D)
+
+        if len(self.Dlist_show) == 0:
+            self.Dlist_show.append(D)
+        else:
+            self.Dlist_show.append(round(D - self.Dlist[-1], 2))
         self.Elist.append(E)
+        self.Dlist.append(D)
         self.Flist.append(F)
 
     def get_data(self):
-        return self.Clist, self.Dlist, self.Elist, self.Flist
+        return self.Clist, self.Dlist_show, self.Elist, self.Flist
 
 
 class Figure3(object):
@@ -286,12 +295,15 @@ class Figure4(object):
         self.Flist = []
 
     def add_data(self, LD, LU, RD, RU, E, F):
+        # newLU_LD = LU-LD
+        # newR
+
         if len(self.A_B_oldlist) == 0:
             self.A_B_oldlist.append(LU - LD)
-            self.C_D_oldlist.append(RD - RU)
+            self.C_D_oldlist.append(RU - RD)
         else:
             self.A_B_oldlist.append(LU - LD - self.A_B_oldlist[-1])
-            self.C_D_oldlist.append(RD - RU - self.C_D_oldlist[-1])
+            self.C_D_oldlist.append(RU - RD - self.C_D_oldlist[-1])
 
         self.Elist.append(E)
         self.Flist.append(F)
